@@ -32,11 +32,12 @@
 /* USER CODE BEGIN PTD */
 #define SampleData 1000
 #define Vzero1 0.0
-__IO uint16_t Nilai_ADC[1];
+__IO uint16_t Nilai_ADC[2];
 int on=0,i,k=0;
 float Iinput, Vinput;
 int asum=0, adata=0, a[500];
 double Vsq [SampleData], Vrms[1], ADCVrms[1], Vsum[1], Vadc[1], iadcx[1];
+double Vsq2 [SampleData], Vrms2[1], ADCVrms2[1], Vsum2[1], Vadc2[1], iadcx2[1];
 uint32_t Tegangan[1];
 
 
@@ -207,6 +208,7 @@ int main(void)
   MX_DMA_Init();
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
+  HAL_GPIO_WritePin(GPIOE,relay_konv_Pin,GPIO_PIN_SET);
 	lcd_init();
 	HAL_TIM_Base_Start_IT(&htim1);
 	HAL_ADC_Start_DMA(&hadc1,(uint32_t*)Nilai_ADC,2);
@@ -216,7 +218,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-		HAL_GPIO_WritePin(GPIOE,relay_konv_Pin,GPIO_PIN_SET);
+    		
 		//		HAL_GPIO_TogglePin(GPIOE,relay_konv_Pin);
 //		HAL_Delay(2000);
 		// lcd_gotoxy(0,0);
@@ -232,7 +234,10 @@ int main(void)
 		lcd_gotoxy(0,1);
 		lcd_puts(buff);
 		ftoa(Vrms[0],buff2,2);
-		
+		sprintf(buff, "suhu:%3.2f",Vrms2[0]);
+		HAL_Delay(100);
+		lcd_gotoxy(0,2);
+		lcd_puts(buff);
 		
     /* USER CODE END WHILE */
 
@@ -500,9 +505,24 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		Vsum[0]+=Vsq[k];
 		ADCVrms[0]=sqrt((Vsum[0]/SampleData));
     Vrms[0] = 0.3131*ADCVrms[0] + 0.1456;
-		k++;
+		
+		Vadc2[0]= Nilai_ADC[1];
+		Vsum2[0]+=Vadc2[0];
+
+
+    k++;
 		if(k>=SampleData)
+    {
 		k=0;
+    ADCVrms2[0]=(Vsum2[0]/SampleData);
+		Vsq2[0]=(ADCVrms2[0]/4094)*3;
+		Vrms2[0]=Vsq2[0]*100;
+    Vsum2[0]=0;
+
+
+//		tegangan = Vrms[0];
+//		suhu = Vrms[1];
+    }
     count2=0;
   }
 }
