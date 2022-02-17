@@ -30,11 +30,119 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+#define SampleData 1000
+#define Vzero1 0.0
+__IO uint16_t Nilai_ADC[1];
+int on=0,i,k=0;
+float Iinput, Vinput;
+int asum=0, adata=0, a[500];
+double Vsq [SampleData], Vrms[1], ADCVrms[1], Vsum[1], Vadc[1], iadcx[1];
+uint32_t Tegangan[1];
 
+
+int dataADC,dataADC2,dataADC3;
+float Voltage,Voltage2;
+float VDC;
+float ecurrent;
+float offset = 2500;
+float sensitivity=100;
+char buff[15];
+char buff2[15];
+char buff3[15];
+char buff4[99]="0";
+char TX_Data[99]="0";
+char RX_Data[2]="0";
+float daya;
+int flag =0;
+int flag2=0;
+unsigned int millis=0;
+unsigned int millis_serial=0;
+int c1=0;
+int dat=0;
+float sudutPenyalaan=90;
+int count=0;
+int cDelay=0;
+int del=1000;
+int relay_state=0;
+int set_point=0;
+//protokol
+char header[15]="$fauqi";
+char suhu[15]="50";
+char tegangan[15]="150";
+char sudut_penyalaan[15]="120";
+char error[15]="40";
+char derror[15]="5";
+char out_fuzzy[15]="0.5";
+char crelay_state[15]="0";
+char cset_point[15]="0";
+char koma[15]=",";
+char b[15]="\r\n";
+int flag_konv=0;
+int sudut =0;
+int count2=0;
+int count3=0;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+void reverse(char* str, int len) 
+{ 
+    int i = 0, j = len - 1, temp; 
+    while (i < j) { 
+        temp = str[i]; 
+        str[i] = str[j]; 
+        str[j] = temp; 
+        i++; 
+        j--; 
+    } 
+} 
+  
+// Converts a given integer x to string str[].  
+// d is the number of digits required in the output.  
+// If d is more than the number of digits in x,  
+// then 0s are added at the beginning. 
+int intToStr(int x, char str[], int d) 
+{ 
+    int i = 0; 
+    while (x) { 
+        str[i++] = (x % 10) + '0'; 
+        x = x / 10; 
+    } 
+  
+    // If number of digits required is more, then 
+    // add 0s at the beginning 
+    while (i < d) 
+        str[i++] = '0'; 
+  
+    reverse(str, i); 
+    str[i] = '\0'; 
+    return i; 
+} 
+  
+// Converts a floating-point/double number to a string. 
+void ftoa(float n, char* res, int afterpoint) 
+{ 
+    // Extract integer part 
+    int ipart = (int)n; 
+  
+    // Extract floating part 
+    float fpart = n - (float)ipart; 
+  
+    // convert integer part to string 
+    int i = intToStr(ipart, res, 0); 
+  
+    // check for display option after point 
+    if (afterpoint != 0) { 
+        res[i] = '.'; // add dot 
+  
+        // Get the value of fraction part upto given no. 
+        // of points after dot. The third parameter  
+        // is needed to handle cases like 233.007 
+        fpart = fpart * pow(10, afterpoint); 
+  
+        intToStr((int)fpart, res + i + 1, afterpoint); 
+    } 
+}
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -43,18 +151,21 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+ADC_HandleTypeDef hadc1;
+DMA_HandleTypeDef hdma_adc1;
+
 TIM_HandleTypeDef htim1;
 
 /* USER CODE BEGIN PV */
-int flag_konv=0;
-int millis=0;
-int count=0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_TIM1_Init(void);
+static void MX_DMA_Init(void);
+static void MX_ADC1_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -93,10 +204,12 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_TIM1_Init();
+  MX_DMA_Init();
+  MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
 	lcd_init();
 	HAL_TIM_Base_Start_IT(&htim1);
-	
+	HAL_ADC_Start_DMA(&hadc1,(uint32_t*)Nilai_ADC,1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -106,9 +219,19 @@ int main(void)
 		HAL_GPIO_WritePin(GPIOE,relay_konv_Pin,GPIO_PIN_SET);
 		//		HAL_GPIO_TogglePin(GPIOE,relay_konv_Pin);
 //		HAL_Delay(2000);
+		// lcd_gotoxy(0,0);
+		// lcd_puts("LONTONG");
+		sprintf(buff, "Vadc:%d",Nilai_ADC[0]);
+		HAL_Delay(100);
 		lcd_gotoxy(0,0);
-		lcd_puts("LONTONG");
-		
+		lcd_puts(buff);
+		HAL_Delay(100);
+//		Vrms[0] = 0.3131*ADCVrms[0] + 0.1456;
+		sprintf(buff, "Vrms:%3.2f",Vrms[0]);
+		HAL_Delay(300);
+		lcd_gotoxy(0,1);
+		lcd_puts(buff);
+		ftoa(Vrms[0],buff2,2);
 		
 		
     /* USER CODE END WHILE */
@@ -140,7 +263,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
   RCC_OscInitStruct.PLL.PLLM = 8;
-  RCC_OscInitStruct.PLL.PLLN = 168;
+  RCC_OscInitStruct.PLL.PLLN = 84;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 4;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
@@ -153,13 +276,63 @@ void SystemClock_Config(void)
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief ADC1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_ADC1_Init(void)
+{
+
+  /* USER CODE BEGIN ADC1_Init 0 */
+
+  /* USER CODE END ADC1_Init 0 */
+
+  ADC_ChannelConfTypeDef sConfig = {0};
+
+  /* USER CODE BEGIN ADC1_Init 1 */
+
+  /* USER CODE END ADC1_Init 1 */
+  /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion)
+  */
+  hadc1.Instance = ADC1;
+  hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV8;
+  hadc1.Init.Resolution = ADC_RESOLUTION_12B;
+  hadc1.Init.ScanConvMode = ENABLE;
+  hadc1.Init.ContinuousConvMode = ENABLE;
+  hadc1.Init.DiscontinuousConvMode = DISABLE;
+  hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
+  hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+  hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+  hadc1.Init.NbrOfConversion = 1;
+  hadc1.Init.DMAContinuousRequests = ENABLE;
+  hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+  if (HAL_ADC_Init(&hadc1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
+  */
+  sConfig.Channel = ADC_CHANNEL_0;
+  sConfig.Rank = 1;
+  sConfig.SamplingTime = ADC_SAMPLETIME_480CYCLES;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN ADC1_Init 2 */
+
+  /* USER CODE END ADC1_Init 2 */
+
 }
 
 /**
@@ -181,7 +354,7 @@ static void MX_TIM1_Init(void)
 
   /* USER CODE END TIM1_Init 1 */
   htim1.Instance = TIM1;
-  htim1.Init.Prescaler = 83;
+  htim1.Init.Prescaler = 41;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim1.Init.Period = 9;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -205,6 +378,22 @@ static void MX_TIM1_Init(void)
   /* USER CODE BEGIN TIM1_Init 2 */
 
   /* USER CODE END TIM1_Init 2 */
+
+}
+
+/**
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void)
+{
+
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA2_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA2_Stream0_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA2_Stream0_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
 
 }
 
@@ -284,8 +473,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		{
       //lontong
 		count=1000;
+    count2=count2+1;
 	if(flag_konv==1)
 		millis=millis+1;
+    
 	if (millis>=count)
 	{
 //ktemu 5us
@@ -293,6 +484,19 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			flag_konv=0;
 			millis=0;
 	}
+  if(count2>=200)
+  {
+    Vadc[0]= Nilai_ADC[0]-1777;
+		Vsum[0]-=Vsq[k];
+		Vsq[k]= Vadc[0] * Vadc[0];
+		Vsum[0]+=Vsq[k];
+		ADCVrms[0]=sqrt((Vsum[0]/SampleData));
+    Vrms[0] = 0.3131*ADCVrms[0] + 0.1456;
+		k++;
+		if(k>=SampleData)
+		k=0;
+    count2=0;
+  }
 }
 		}
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
