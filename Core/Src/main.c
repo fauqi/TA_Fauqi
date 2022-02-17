@@ -208,10 +208,11 @@ int main(void)
   MX_DMA_Init();
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
-  HAL_GPIO_WritePin(GPIOE,relay_konv_Pin,GPIO_PIN_SET);
+  
 	lcd_init();
 	HAL_TIM_Base_Start_IT(&htim1);
 	HAL_ADC_Start_DMA(&hadc1,(uint32_t*)Nilai_ADC,2);
+  HAL_GPIO_WritePin(GPIOE,relay_konv_Pin,GPIO_PIN_SET);
   /* USER CODE END 2 */
 
   /* Infinite loop */
