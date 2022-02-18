@@ -494,8 +494,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	if (millis>=count)
 	{
 //ktemu 5us
+    flag_konv=0;
 			HAL_GPIO_WritePin(GPIOA,GPIO_PIN_3,GPIO_PIN_SET);
-			flag_konv=0;
 			millis=0;
 	}
   if(count2>=200)
@@ -537,8 +537,9 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
            the HAL_GPIO_EXTI_Callback could be implemented in the user file
    */
 		if(HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_2)==1)
-		{flag_konv=1;
+		{
 	HAL_GPIO_WritePin(GPIOA,out_konv_Pin,GPIO_PIN_RESET);
+  flag_konv=1;
 		}
 	
 }
