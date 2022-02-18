@@ -68,7 +68,7 @@ int relay_state=0;
 int set_point=0;
 //protokol
 char header[15]="$fauqi";
-char suhu[15]="50";
+char csuhu[15]="50";
 char tegangan[15]="150";
 char sudut_penyalaan[15]="120";
 char error[15]="40";
@@ -228,10 +228,6 @@ int main(void)
   while (1)
   {
     		
-		//		HAL_GPIO_TogglePin(GPIOE,relay_konv_Pin);
-//		HAL_Delay(2000);
-		// lcd_gotoxy(0,0);
-		// lcd_puts("LONTONG");
 		sprintf(buff, "firing:90");
 		HAL_Delay(100);
 		lcd_gotoxy(0,0);
@@ -251,22 +247,12 @@ int main(void)
 		HAL_Delay(100);
 		lcd_gotoxy(0,3);
 		lcd_puts(buff);
-		
-//			sprintf(buff, "Vadc:%d",Nilai_ADC[0]);
-//		HAL_Delay(100);
-//		lcd_gotoxy(0,0);
-//		lcd_puts(buff);
-//		HAL_Delay(100);
-////		Vrms[0] = 0.3131*ADCVrms[0] + 0.1456;
-//		sprintf(buff, "Vrms:%3.2f",Vrms[0]);
-//		HAL_Delay(300);
-//		lcd_gotoxy(0,1);
-//		lcd_puts(buff);
 		ftoa(Vrms[0],buff2,2);
+		ftoa(Vrms2[0],csuhu,2);
 		//membuat protokol
 		strcpy(TX_Data,header);
 		strcat(TX_Data,koma);
-  	strcat(TX_Data,suhu);
+  	strcat(TX_Data,csuhu);
    	strcat(TX_Data,koma);
 		strcat(TX_Data,buff2);
 		strcat(TX_Data,koma);
