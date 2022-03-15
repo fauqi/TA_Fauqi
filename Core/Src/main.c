@@ -18,7 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
+//cek
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include"math.h"
@@ -82,6 +82,7 @@ int flag_konv=0;
 int sudut =0;
 int count2=0;
 int count3=0;
+int counter=0;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -227,24 +228,49 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+
+    if(HAL_GPIO_ReadPin(GPIOC,PB_up_Pin)==1)
+    {
+      
+      while(HAL_GPIO_ReadPin(GPIOC,PB_up_Pin)==1){
+      HAL_Delay(50);
+      counter=counter+1;
+			sprintf(buff, "sp:%4d",counter);
+		// HAL_Delay(100);
+		lcd_gotoxy(0,3);
+		lcd_puts(buff);
+      }
+    }
+        if(HAL_GPIO_ReadPin(GPIOC,PB_down_Pin)==1)
+    {
+      
+      while(HAL_GPIO_ReadPin(GPIOC,PB_down_Pin)==1){
+			 HAL_Delay(50);
+      counter=counter-1;
+			sprintf(buff, "sp:%4d",counter);
+		// HAL_Delay(100);
+		lcd_gotoxy(0,3);
+		lcd_puts(buff);
+			}
+    }
     		
 		sprintf(buff, "firing:90");
-		HAL_Delay(100);
+		// HAL_Delay(100);
 		lcd_gotoxy(0,0);
 		lcd_puts(buff);
-		HAL_Delay(100);
+		// HAL_Delay(100);
 //		Vrms[0] = 0.3131*ADCVrms[0] + 0.1456;
 		sprintf(buff, "Vrms:%3.2f",Vrms[0]);
-		HAL_Delay(300);
+		// HAL_Delay(300);
 		lcd_gotoxy(0,1);
 		lcd_puts(buff);
 		ftoa(Vrms[0],buff2,2);
 		sprintf(buff, "suhu:%3.2f",Vrms2[0]);
-		HAL_Delay(100);
+		// HAL_Delay(100);
 		lcd_gotoxy(0,2);
 		lcd_puts(buff);
-		sprintf(buff, "sp:%d",set_point);
-		HAL_Delay(100);
+			sprintf(buff, "sp:%4d",counter);
+		// HAL_Delay(100);
 		lcd_gotoxy(0,3);
 		lcd_puts(buff);
 		ftoa(Vrms[0],buff2,2);
@@ -572,7 +598,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_12);
 			millis_serial=0;
 	}
-	if (millis>=count)
+	if (millis>=counter)
 	{
 //ktemu 5us
     flag_konv=0;
