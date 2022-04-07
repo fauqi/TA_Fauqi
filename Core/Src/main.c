@@ -83,6 +83,7 @@ int sudut =0;
 int count2=0;
 int count3=0;
 int counter=0;
+float set_tegangan=206.0;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -229,39 +230,54 @@ int main(void)
   while (1)
   {
 
-    if(HAL_GPIO_ReadPin(GPIOC,PB_up_Pin)==1)
-    {
-      
-      while(HAL_GPIO_ReadPin(GPIOC,PB_up_Pin)==1){
-      HAL_Delay(50);
-      counter=counter+1;
-			sprintf(buff, "sp:%4d",counter);
-		// HAL_Delay(100);
-		lcd_gotoxy(0,3);
-		lcd_puts(buff);
-      }
-    }
-        if(HAL_GPIO_ReadPin(GPIOC,PB_down_Pin)==1)
-    {
-      
-      while(HAL_GPIO_ReadPin(GPIOC,PB_down_Pin)==1){
-			 HAL_Delay(50);
-      counter=counter-1;
-			sprintf(buff, "sp:%4d",counter);
-		// HAL_Delay(100);
-		lcd_gotoxy(0,3);
-		lcd_puts(buff);
+			if(HAL_GPIO_ReadPin(GPIOC,PB_up_Pin)==1)
+			{
+				
+				while(HAL_GPIO_ReadPin(GPIOC,PB_up_Pin)==1){
+				
+				counter=counter+1;
+				sprintf(buff, "counter:%4d",counter);
+			// HAL_Delay(100);
+					HAL_Delay(50);
+			lcd_gotoxy(0,3);
+			lcd_puts(buff);
+				}
 			}
-    }
-    		
+					if(HAL_GPIO_ReadPin(GPIOC,PB_down_Pin)==1)
+			{
+				
+				while(HAL_GPIO_ReadPin(GPIOC,PB_down_Pin)==1){
+				 
+				counter=counter-1;
+				sprintf(buff, "counter:%4d",counter);
+					HAL_Delay(50);
+			// HAL_Delay(100);
+			lcd_gotoxy(0,3);
+			lcd_puts(buff);
+				}
+			}
+
+//    if(Vrms[0]>set_tegangan+0.5)
+//		{
+//			counter = counter+1;
+//		} 
+//		else if(Vrms[0]<set_tegangan-0.5)
+//		{
+//			counter = counter-1;
+//		}
+//		else if (Vrms[0]>=set_tegangan-0.5&&Vrms[0]<=set_tegangan-0.5)
+//		{
+//			counter=counter;
+//		}
+			
 		sprintf(buff, "firing:90");
 		// HAL_Delay(100);
 		lcd_gotoxy(0,0);
-		lcd_puts(buff);
+		lcd_puts("Pengujian Sensor");
 		// HAL_Delay(100);
 //		Vrms[0] = 0.3131*ADCVrms[0] + 0.1456;
 		sprintf(buff, "Vrms:%3.2f",Vrms[0]);
-		// HAL_Delay(300);
+		HAL_Delay(300);
 		lcd_gotoxy(0,1);
 		lcd_puts(buff);
 		ftoa(Vrms[0],buff2,2);
@@ -269,7 +285,7 @@ int main(void)
 		// HAL_Delay(100);
 		lcd_gotoxy(0,2);
 		lcd_puts(buff);
-			sprintf(buff, "sp:%4d",counter);
+			sprintf(buff, "counter:%4d",counter);
 		// HAL_Delay(100);
 		lcd_gotoxy(0,3);
 		lcd_puts(buff);
@@ -605,7 +621,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			HAL_GPIO_WritePin(GPIOA,GPIO_PIN_3,GPIO_PIN_SET);
 			millis=0;
 	}
-  if(count2>=200)
+  if(count2>=20)
   {
     Vadc[0]= Nilai_ADC[0]-1777;
 		Vsum[0]-=Vsq[k];
