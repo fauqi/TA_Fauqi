@@ -90,31 +90,23 @@ float set_tegangan=206.0;
 float nadi, suhu,error,derror;
 float A, B;
 
-float udingin[] = {-25,0.0001261,25};
-float unormal[] = {0.0001261,25,50};
-float upanas[] = {25,50,75};
-
-float ulambat[] = {-0.09236,-3.279e-06,0.09235};
-float usedang[] = {-3.279e-06, 0.09235, 0.1847};
-float ucepat[] = {0.093, 0.1854, 0.2777};
-
 //mf gw
 
-float in1mf1[] = {-10.24, -0.2039, 9.787};
-float in1mf2[] = {-0.02723, 9.831, 19.86};
-float in1mf3[] = {9.878, 19.86, 29.9};
-float in1mf4[] = {19.87, 29.9, 39.93};
-float in1mf5[] = {29.9, 39.93, 49.97};
-float in1mf6[] = {39.93, 49.97, 60};
-float in1mf7[] = {49.97, 60, 70.03};
+float in1mf1[] = {-6.123, 0.4658, 7.055};
+float in1mf2[] = {0.4658, 7.055, 13.64};
+float in1mf3[] = {7.055, 13.64, 20.23};
+float in1mf4[] = {13.64, 20.23, 26.82};
+float in1mf5[] = {20.23, 26.82, 33.41};
+float in1mf6[] = {26.8, 33.4, 40};
+float in1mf7[] = {33.41, 40, 46.59};
 
-float in2mf1[] ={-0.02755, -0.002452, 0.04637};
-float in2mf2[] ={-0.00373, 0.02944, 0.05339};
-float in2mf3[] ={0.03345, 0.05297, 0.08263};
-float in2mf4[] ={0.05221, 0.0827, 0.11};
-float in2mf5[] ={0.08256, 0.1104, 0.1377};
-float in2mf6[] ={0.1103, 0.1378, 0.1653};
-float in2mf7[] ={0.1378, 0.1653, 0.1929};
+float in2mf1[] ={-0.01407, -1.754e-05, 0.01404};
+float in2mf2[] ={-1.75e-05, 0.014, 0.0281};
+float in2mf3[] ={0.01404, 0.02809, 0.04214};
+float in2mf4[] ={0.02809, 0.04214, 0.05619};
+float in2mf5[] ={0.0421, 0.0562, 0.0702};
+float in2mf6[] ={0.05619, 0.07025, 0.0843};
+float in2mf7[] ={0.07025, 0.0843, 0.09835};
 
 
 
@@ -122,55 +114,55 @@ float sakit = 0;
 float ks = 0.5;
 float sehat = 1;
 
-float out1mf1=  0.2936;
-float out1mf2=  0.2778;
-float out1mf3=  0;
+float out1mf1=   0.8021;
+float out1mf2=   0.778;
+float out1mf3=   0.8566;
 float out1mf4= 0;
 float out1mf5= 0;
 float out1mf6= 0;
 float out1mf7= 0;
-float out1mf8= 0.4129;
-float out1mf9=  0.4329;
-float out1mf10=  0.6855;
-float out1mf11=  -0.08229;
-float out1mf12= 0;
+float out1mf8=  0.4591;
+float out1mf9=   0.4482;
+float out1mf10=   0.4168;
+float out1mf11=   0.3137;
+float out1mf12=  0.2165;
 float out1mf13= 0;
 float out1mf14= 0;
-float out1mf15=  0.5555;
-float out1mf16=  0.5668;
-float out1mf17=  1.159;
-float out1mf18=  -0.0224;
-float out1mf19= 0;
+float out1mf15=   0.1457;
+float out1mf16=  0.1488;
+float out1mf17=   0.1485;
+float out1mf18=   0.1687;
+float out1mf19=  0.163;
 float out1mf20= 0;
 float out1mf21= 0;
-float out1mf22=  0.3448;
-float out1mf23=  0.1171;
-float out1mf24=  -0.4442;
-float out1mf25=  0.07672;
-float out1mf26= 0;
-float out1mf27= 0;
+float out1mf22=   0.1727;
+float out1mf23=   0.1687;
+float out1mf24=   0.1652;
+float out1mf25=  0.1556;
+float out1mf26=  0.1529;
+float out1mf27=  0.15;
 float out1mf28= 0;
-float out1mf29=  0.09013;
-float out1mf30=  0.09394;
-float out1mf31=  0.09973;
-float out1mf32=  0.095;
-float out1mf33=  0.09328;
-float out1mf34=  0.0719;
+float out1mf29=   0.163;
+float out1mf30=   0.156;
+float out1mf31=   0.149;
+float out1mf32=   0.1442;
+float out1mf33=   0.1361;
+float out1mf34=   0.1297;
 float out1mf35= 0;
-float out1mf36=  -0.01216;
-float out1mf37=  -0.0006236;
-float out1mf38= 0.01066 ;
-float out1mf39=  0.008103;
-float out1mf40=  0.01612;
-float out1mf41= 0.02059 ;
-float out1mf42= 0.04275 ;
-float out1mf43=  -0.114;
-float out1mf44= -0.09936 ;
-float out1mf45=  -0.08476;
-float out1mf46= -0.08615 ;
-float out1mf47=  -0.07549;
-float out1mf48=  -0.065;
-float out1mf49=  -0.03558;
+float out1mf36=  0.0815;
+float out1mf37=   0.0815;
+float out1mf38=  0.07473 ;
+float out1mf39=   0.07028;
+float out1mf40=   0.06775;
+float out1mf41=  0.06407 ;
+float out1mf42=  0.06136 ;
+float out1mf43=   -8.304e-06;
+float out1mf44=  -3.965e-05 ;
+float out1mf45=  -4.522e-05;
+float out1mf46=  0.0004035 ;
+float out1mf47=   3.729e-05;
+float out1mf48=   9.353e-05;
+float out1mf49=   -0.0001988;
 
 
 
@@ -451,109 +443,8 @@ float fin2mf7()
         return 1;
     }
 }
-float fudingin()
-{
-    if (suhu < udingin[1])
-    {
-        return 1;
-    }
-    else if (suhu >= udingin[1] && suhu <= udingin[2])
-    {
-        return (udingin[2] - suhu) / (udingin[2] - udingin[1]);
-    }
-    else if (suhu > udingin[2])
-    {
-        return 0;
-    }
-}
 
-float funormal()
-{
-    if (suhu < unormal[0])
-    {
-        return 0;
-    }
-    else if (suhu >= unormal[0] && suhu <= unormal[1])
-    {
-        return (suhu - unormal[0]) / (unormal[1] - unormal[0]);
-    }
-    else if (suhu >= unormal[1] && suhu <= unormal[2])
-    {
-        return (unormal[2] - suhu) / (unormal[2] - unormal[1]);
-    }
-    else if (suhu > unormal[2])
-    {
-        return 0;
-    }
-}
 
-float fupanas()
-{
-    if (suhu < upanas[0])
-    {
-        return 0;
-    }
-    else if (suhu >= upanas[0] && suhu <= upanas[1])
-    {
-        return (suhu - upanas[0]) / (upanas[1] - upanas[0]);
-    }
-    else if (suhu > upanas[1])
-    {
-        return 1;
-    }
-}
-
-float fulambat()
-{
-    if (nadi < ulambat[1])
-    {
-        return 1;
-    }
-    else if (nadi >= ulambat[1] && nadi <= ulambat[2])
-    {
-        return (ulambat[2] - nadi) / (ulambat[2] - ulambat[1]);
-    }
-    else if (nadi > ulambat[2])
-    {
-        return 0;
-    }
-}
-
-float fusedang()
-{
-    if (nadi < usedang[0])
-    {
-        return 0;
-    }
-    else if (nadi >= usedang[0] && nadi <= usedang[1])
-    {
-        return (nadi - usedang[0]) / (usedang[1] - usedang[0]);
-    }
-    else if (nadi >= usedang[1] && nadi <= usedang[2])
-    {
-        return (usedang[2] - nadi) / (usedang[2] - usedang[1]);
-    }
-    else if (nadi > usedang[2])
-    {
-        return 0;
-    }
-}
-
-float fucepat()
-{
-    if (nadi <= ucepat[0])
-    {
-        return 0;
-    }
-    else if (nadi > ucepat[0] && nadi < ucepat[1])
-    {
-        return (nadi - ucepat[0]) / (ucepat[1] - ucepat[0]);
-    }
-    else if (nadi >= ucepat[1])
-    {
-        return 1;
-    }
-}
 
 float Min(float a, float b)
 {
@@ -889,8 +780,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    error = 27.0;
-    derror =0.0827;
+    error = 16;
+    derror =0.00484;
 			if(HAL_GPIO_ReadPin(GPIOC,PB_up_Pin)==1)
 			{
 				
@@ -934,19 +825,19 @@ int main(void)
 		sprintf(buff, "firing:90");
 		// HAL_Delay(100);
 		lcd_gotoxy(0,0);
-		lcd_puts("Pengujian Sensor");
+		lcd_puts("uji Perhitungan FIS");
 		// HAL_Delay(100);
 //		Vrms[0] = 0.3131*ADCVrms[0] + 0.1456;
-		sprintf(buff, "Vrms:%3.2f",Vrms[0]);
+		sprintf(buff, "error:%3.5f",error);
 		HAL_Delay(300);
 		lcd_gotoxy(0,1);
 		lcd_puts(buff);
 		ftoa(Vrms[0],buff2,2);
-		sprintf(buff, "suhu:%3.5f",defuzzyfikasi());
+		sprintf(buff, "derror:%3.5f",derror);
 		// HAL_Delay(100);
 		lcd_gotoxy(0,2);
 		lcd_puts(buff);
-			sprintf(buff, "counter:%4d",counter);
+			sprintf(buff, "out_fis:%3.5f",defuzzyfikasi());
 		// HAL_Delay(100);
 		lcd_gotoxy(0,3);
 		lcd_puts(buff);
