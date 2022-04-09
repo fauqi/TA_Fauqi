@@ -858,7 +858,7 @@ Vrms2[0]=36.0;
 		lcd_gotoxy(0,1);
 		lcd_puts(buff);
 		ftoa(Vrms[0],buff2,2);
-		sprintf(buff, "Suhu:%3.5f",sudut);
+		sprintf(buff, "Suhu:%3.5f",Vrms2[0]);
 		// HAL_Delay(100);
 		lcd_gotoxy(0,2);
 		lcd_puts(buff);
