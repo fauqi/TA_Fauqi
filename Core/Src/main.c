@@ -34,13 +34,14 @@
 #define Vzero1 0.0
 __IO uint16_t Nilai_ADC[2];
 int on=0,i,k=0;
-float Iinput, Vinput;
+float Iinput, Vinput,out_fis;
 int asum=0, adata=0, a[500];
 double Vsq [SampleData], Vrms[1], ADCVrms[1], Vsum[1], Vadc[1], iadcx[1];
 double Vsq2 [SampleData], Vrms2[1], ADCVrms2[1], Vsum2[1], Vadc2[1], iadcx2[1];
 uint32_t Tegangan[1];
 
-
+float sudut=90;
+double p;
 int dataADC,dataADC2,dataADC3;
 float Voltage,Voltage2;
 float VDC;
@@ -56,30 +57,30 @@ char RX_Data[2]="0";
 float daya;
 int flag =0;
 int flag2=0;
+int flag_error=0;
 unsigned int millis=0;
 unsigned int millis_serial=0;
 int c1=0;
 int dat=0;
-float sudutPenyalaan=90;
 int count=0;
 int cDelay=0;
 int del=1000;
 int relay_state=0;
-int set_point=0;
+float set_point=40.0;
 //protokol
 char header[15]="$fauqi";
 char csuhu[15]="50";
-char tegangan[15]="150";
-char sudut_penyalaan[15]="120";
-//char error[15]="40";
-//char derror[15]="5";
-char out_fuzzy[15]="0.5";
+char ctegangan[15]="150";
+char csudut[15]="120";
+char cerror[15]="40";
+char cderror[15]="5";
+char cout_fis[15]="0.5";
 char crelay_state[15]="0";
 char cset_point[15]="0";
 char koma[15]=",";
 char b[15]="\r\n";
 int flag_konv=0;
-int sudut =0;
+//int sudut =0;
 int count2=0;
 int count3=0;
 int counter=1000;
@@ -87,7 +88,7 @@ float set_tegangan=206.0;
 
 
 
-float nadi, suhu,error,derror;
+float nadi, suhu,error,derror=0,error2;
 float A, B;
 
 //mf gw
@@ -780,8 +781,14 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    error = 16;
-    derror =0.00484;
+		
+	//tobe deleted
+//		if (flag==0)
+//		{
+//			sudut =90;
+//			flag=1;
+//		}
+
 			if(HAL_GPIO_ReadPin(GPIOC,PB_up_Pin)==1)
 			{
 				
@@ -821,42 +828,64 @@ int main(void)
 //		{
 //			counter=counter;
 //		}
-			
+Vrms2[0]=36.0;
+    if (flag_error==0)
+    {
+    error =set_point-Vrms2[0];
+    flag=1;
+    
+    }
+    else 
+    {   error2=set_point-Vrms2[0];
+        derror =error-error2;
+        error=error2;
+    }
+    out_fis=defuzzyfikasi();
+    sudut = out_fis*180.0;
+	if(sudut>=0.0 && sudut <=180.0)
+	{
+      p=((0.01*sudut)/180)/0.000005;
+	  counter=floor(p);
+	}
 		sprintf(buff, "firing:90");
 		// HAL_Delay(100);
 		lcd_gotoxy(0,0);
 		lcd_puts("uji Perhitungan FIS");
 		// HAL_Delay(100);
 //		Vrms[0] = 0.3131*ADCVrms[0] + 0.1456;
-		sprintf(buff, "error:%3.5f",error);
+		sprintf(buff, "Vrms:%3.5f",Vrms[0]);
 		HAL_Delay(300);
 		lcd_gotoxy(0,1);
 		lcd_puts(buff);
 		ftoa(Vrms[0],buff2,2);
-		sprintf(buff, "derror:%3.5f",derror);
+		sprintf(buff, "Suhu:%3.5f",sudut);
 		// HAL_Delay(100);
 		lcd_gotoxy(0,2);
 		lcd_puts(buff);
-			sprintf(buff, "out_fis:%3.5f",defuzzyfikasi());
+		sprintf(buff, "counter:%4d",counter);
 		// HAL_Delay(100);
 		lcd_gotoxy(0,3);
 		lcd_puts(buff);
-		ftoa(Vrms[0],buff2,2);
+		ftoa(Vrms[0],ctegangan,2);
 		ftoa(Vrms2[0],csuhu,2);
+        ftoa(sudut,csudut,2);
+        ftoa(error,cerror,2);
+        ftoa(derror,cderror,2);
+        ftoa(out_fis,cout_fis,2);
 		//membuat protokol
 		strcpy(TX_Data,header);
 		strcat(TX_Data,koma);
-  	strcat(TX_Data,csuhu);
-   	strcat(TX_Data,koma);
-		strcat(TX_Data,buff2);
+  	    strcat(TX_Data,csuhu);
+    	strcat(TX_Data,koma);
+		strcat(TX_Data,ctegangan);
 		strcat(TX_Data,koma);
-		strcat(TX_Data,sudut_penyalaan);
+		strcat(TX_Data,csudut);
 		strcat(TX_Data,koma);
-//		strcat(TX_Data,error);
-//		strcat(TX_Data,koma);
-//		strcat(TX_Data,derror);
+		strcat(TX_Data,cerror);
 		strcat(TX_Data,koma);
-		strcat(TX_Data,out_fuzzy);
+		strcat(TX_Data,cderror);
+		strcat(TX_Data,koma);
+		strcat(TX_Data,cout_fis);
 		strcat(TX_Data,koma);
 	  strcat(TX_Data,b);
 		
@@ -1215,9 +1244,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	int data;
 	if(strncmp(RX_Data,"lontong",strlen(RX_Data))==0){}
 	data=atoi(RX_Data);
-	if(data == 40)set_point=40;
-	else if (data==50)set_point=50;
-	else if (data ==61)set_point=61;
+	if(data == 40)set_point=40.0;
+	else if (data==50)set_point=50.0;
+	else if (data ==61)set_point=61.0;
 	else if(data==10) {relay_state=1;HAL_GPIO_WritePin(GPIOA,GPIO_PIN_4,GPIO_PIN_SET);}
 	else if(data==11){relay_state=0;HAL_GPIO_WritePin(GPIOA,GPIO_PIN_4,GPIO_PIN_RESET);}
 	else if(data==20) {relay_state=1;HAL_GPIO_WritePin(GPIOE,GPIO_PIN_7,GPIO_PIN_SET);}
