@@ -71,8 +71,8 @@ char header[15]="$fauqi";
 char csuhu[15]="50";
 char tegangan[15]="150";
 char sudut_penyalaan[15]="120";
-char error[15]="40";
-char derror[15]="5";
+//char error[15]="40";
+//char derror[15]="5";
 char out_fuzzy[15]="0.5";
 char crelay_state[15]="0";
 char cset_point[15]="0";
@@ -82,12 +82,672 @@ int flag_konv=0;
 int sudut =0;
 int count2=0;
 int count3=0;
-int counter=0;
+int counter=1000;
 float set_tegangan=206.0;
+
+
+
+float nadi, suhu,error,derror;
+float A, B;
+
+float udingin[] = {-25,0.0001261,25};
+float unormal[] = {0.0001261,25,50};
+float upanas[] = {25,50,75};
+
+float ulambat[] = {-0.09236,-3.279e-06,0.09235};
+float usedang[] = {-3.279e-06, 0.09235, 0.1847};
+float ucepat[] = {0.093, 0.1854, 0.2777};
+
+//mf gw
+
+float in1mf1[] = {-10.24, -0.2039, 9.787};
+float in1mf2[] = {-0.02723, 9.831, 19.86};
+float in1mf3[] = {9.878, 19.86, 29.9};
+float in1mf4[] = {19.87, 29.9, 39.93};
+float in1mf5[] = {29.9, 39.93, 49.97};
+float in1mf6[] = {39.93, 49.97, 60};
+float in1mf7[] = {49.97, 60, 70.03};
+
+float in2mf1[] ={-0.02755, -0.002452, 0.04637};
+float in2mf2[] ={-0.00373, 0.02944, 0.05339};
+float in2mf3[] ={0.03345, 0.05297, 0.08263};
+float in2mf4[] ={0.05221, 0.0827, 0.11};
+float in2mf5[] ={0.08256, 0.1104, 0.1377};
+float in2mf6[] ={0.1103, 0.1378, 0.1653};
+float in2mf7[] ={0.1378, 0.1653, 0.1929};
+
+
+
+float sakit = 0;
+float ks = 0.5;
+float sehat = 1;
+
+float out1mf1=  0.2936;
+float out1mf2=  0.2778;
+float out1mf3=  0;
+float out1mf4= 0;
+float out1mf5= 0;
+float out1mf6= 0;
+float out1mf7= 0;
+float out1mf8= 0.4129;
+float out1mf9=  0.4329;
+float out1mf10=  0.6855;
+float out1mf11=  -0.08229;
+float out1mf12= 0;
+float out1mf13= 0;
+float out1mf14= 0;
+float out1mf15=  0.5555;
+float out1mf16=  0.5668;
+float out1mf17=  1.159;
+float out1mf18=  -0.0224;
+float out1mf19= 0;
+float out1mf20= 0;
+float out1mf21= 0;
+float out1mf22=  0.3448;
+float out1mf23=  0.1171;
+float out1mf24=  -0.4442;
+float out1mf25=  0.07672;
+float out1mf26= 0;
+float out1mf27= 0;
+float out1mf28= 0;
+float out1mf29=  0.09013;
+float out1mf30=  0.09394;
+float out1mf31=  0.09973;
+float out1mf32=  0.095;
+float out1mf33=  0.09328;
+float out1mf34=  0.0719;
+float out1mf35= 0;
+float out1mf36=  -0.01216;
+float out1mf37=  -0.0006236;
+float out1mf38= 0.01066 ;
+float out1mf39=  0.008103;
+float out1mf40=  0.01612;
+float out1mf41= 0.02059 ;
+float out1mf42= 0.04275 ;
+float out1mf43=  -0.114;
+float out1mf44= -0.09936 ;
+float out1mf45=  -0.08476;
+float out1mf46= -0.08615 ;
+float out1mf47=  -0.07549;
+float out1mf48=  -0.065;
+float out1mf49=  -0.03558;
+
+
+
+
+float minr[50];
+float Rule[50];
+
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+
+float fin1mf1()
+{
+        if (error < in1mf1[1])
+    {
+        return 1;
+    }
+        else if (error >= in1mf1[1] && error <= in1mf1[2])
+    {
+        return (in1mf1[2] - error) / (in1mf1[2] - in1mf1[1]);
+    }
+        else if (error > in1mf1[2])
+    {
+        return 0;
+    }
+
+}
+float fin1mf2()
+{
+    if (error < in1mf2[0])
+    {
+        return 0;
+    }
+    else if (error >= in1mf2[0] && error <= in1mf2[1])
+    {
+        return (error - in1mf2[0]) / (in1mf2[1] - in1mf2[0]);
+    }
+    else if (error >= in1mf1[1] && error <= in1mf2[2])
+    {
+        return (in1mf2[2] - error) / (in1mf2[2] - in1mf2[1]);
+    }
+    else if (error > in1mf2[2])
+    {
+        return 0;
+    }
+
+}
+
+float fin1mf3()
+{
+    if (error < in1mf3[0])
+    {
+        return 0;
+    }
+    else if (error >= in1mf3[0] && error <= in1mf3[1])
+    {
+        return (error - in1mf3[0]) / (in1mf3[1] - in1mf3[0]);
+    }
+    else if (error >= in1mf3[1] && error <= in1mf3[2])
+    {
+        return (in1mf3[2] - error) / (in1mf3[2] - in1mf3[1]);
+    }
+    else if (error > in1mf3[2])
+    {
+        return 0;
+    }
+
+}
+
+float fin1mf4()
+{
+    if (error < in1mf4[0])
+    {
+        return 0;
+    }
+    else if (error >= in1mf4[0] && error <= in1mf4[1])
+    {
+        return (error - in1mf4[0]) / (in1mf4[1] - in1mf4[0]);
+    }
+    else if (error >= in1mf4[1] && error <= in1mf4[2])
+    {
+        return (in1mf4[2] - error) / (in1mf4[2] - in1mf4[1]);
+    }
+    else if (error > in1mf4[2])
+    {
+        return 0;
+    }
+
+}
+float fin1mf5()
+{
+    if (error < in1mf5[0])
+    {
+        return 0;
+    }
+    else if (error >= in1mf5[0] && error <= in1mf5[1])
+    {
+        return (error - in1mf5[0]) / (in1mf5[1] - in1mf5[0]);
+    }
+    else if (error >= in1mf5[1] && error <= in1mf5[2])
+    {
+        return (in1mf5[2] - error) / (in1mf5[2] - in1mf5[1]);
+    }
+    else if (error > in1mf5[2])
+    {
+        return 0;
+    }
+
+}
+
+float fin1mf6()
+{
+    if (error < in1mf6[0])
+    {
+        return 0;
+    }
+    else if (error >= in1mf6[0] && error <= in1mf6[1])
+    {
+        return (error - in1mf6[0]) / (in1mf6[1] - in1mf6[0]);
+    }
+    else if (error >= in1mf6[1] && error <= in1mf6[2])
+    {
+        return (in1mf6[2] - error) / (in1mf6[2] - in1mf6[1]);
+    }
+    else if (error > in1mf6[2])
+    {
+        return 0;
+    }
+
+}
+
+float fin1mf7()
+{
+    if (error < in1mf7[0])
+    {
+        return 0;
+    }
+    else if (error >= in1mf7[0] && error <= in1mf7[1])
+    {
+        return (error - in1mf7[0]) / (in1mf7[1] - in1mf7[0]);
+    }
+    else if (error > in1mf7[1])
+    {
+        return 1;
+    }
+}
+
+float fin2mf1()
+{
+        if (derror < in2mf1[1])
+    {
+        return 1;
+    }
+        else if (derror >= in2mf1[1] && derror <= in2mf1[2])
+    {
+        return (in2mf1[2] - derror) / (in2mf1[2] - in2mf1[1]);
+    }
+        else if (derror > in2mf1[2])
+    {
+        return 0;
+    }
+
+}
+float fin2mf2()
+{
+    if (derror < in2mf2[0])
+    {
+        return 0;
+    }
+    else if (derror >= in2mf2[0] && derror <= in2mf2[1])
+    {
+        return (derror - in2mf2[0]) / (in2mf2[1] - in2mf2[0]);
+    }
+    else if (derror >= in2mf2[1] && derror <= in2mf2[2])
+    {
+        return (in2mf2[2] - derror) / (in2mf2[2] - in2mf2[1]);
+    }
+    else if (derror > in2mf2[2])
+    {
+        return 0;
+    }
+
+}
+float fin2mf3()
+{
+    if (derror < in2mf3[0])
+    {
+        return 0;
+    }
+    else if (derror >= in2mf3[0] && derror <= in2mf3[1])
+    {
+        return (derror - in2mf3[0]) / (in2mf3[1] - in2mf3[0]);
+    }
+    else if (derror >= in2mf3[1] && derror <= in2mf3[2])
+    {
+        return (in2mf3[2] - derror) / (in2mf3[2] - in2mf3[1]);
+    }
+    else if (derror > in2mf3[2])
+    {
+        return 0;
+    }
+
+}
+float fin2mf4()
+{
+    if (derror < in2mf4[0])
+    {
+        return 0;
+    }
+    else if (derror >= in2mf4[0] && derror <= in2mf4[1])
+    {
+        return (derror - in2mf4[0]) / (in2mf4[1] - in2mf4[0]);
+    }
+    else if (derror >= in2mf4[1] && derror <= in2mf4[2])
+    {
+        return (in2mf4[2] - derror) / (in2mf4[2] - in2mf4[1]);
+    }
+    else if (derror > in2mf4[2])
+    {
+        return 0;
+    }
+
+}
+
+float fin2mf5()
+{
+    if (derror < in2mf5[0])
+    {
+        return 0;
+    }
+    else if (derror >= in2mf5[0] && derror <= in2mf5[1])
+    {
+        return (derror - in2mf5[0]) / (in2mf5[1] - in2mf5[0]);
+    }
+    else if (derror >= in2mf5[1] && derror <= in2mf5[2])
+    {
+        return (in2mf5[2] - derror) / (in2mf5[2] - in2mf5[1]);
+    }
+    else if (derror > in2mf5[2])
+    {
+        return 0;
+    }
+
+}
+float fin2mf6()
+{
+    if (derror < in2mf6[0])
+    {
+        return 0;
+    }
+    else if (derror >= in2mf6[0] && derror <= in2mf6[1])
+    {
+        return (derror - in2mf6[0]) / (in2mf6[1] - in2mf6[0]);
+    }
+    else if (derror >= in2mf6[1] && derror <= in2mf6[2])
+    {
+        return (in2mf6[2] - derror) / (in2mf6[2] - in2mf6[1]);
+    }
+    else if (derror > in2mf6[2])
+    {
+        return 0;
+    }
+
+}
+float fin2mf7()
+{
+    if (derror < in2mf7[0])
+    {
+        return 0;
+    }
+    else if (derror >= in2mf7[0] && derror <= in2mf7[1])
+    {
+        return (derror - in2mf7[0]) / (in2mf7[1] - in2mf7[0]);
+    }
+    else if (derror > in2mf7[1])
+    {
+        return 1;
+    }
+}
+float fudingin()
+{
+    if (suhu < udingin[1])
+    {
+        return 1;
+    }
+    else if (suhu >= udingin[1] && suhu <= udingin[2])
+    {
+        return (udingin[2] - suhu) / (udingin[2] - udingin[1]);
+    }
+    else if (suhu > udingin[2])
+    {
+        return 0;
+    }
+}
+
+float funormal()
+{
+    if (suhu < unormal[0])
+    {
+        return 0;
+    }
+    else if (suhu >= unormal[0] && suhu <= unormal[1])
+    {
+        return (suhu - unormal[0]) / (unormal[1] - unormal[0]);
+    }
+    else if (suhu >= unormal[1] && suhu <= unormal[2])
+    {
+        return (unormal[2] - suhu) / (unormal[2] - unormal[1]);
+    }
+    else if (suhu > unormal[2])
+    {
+        return 0;
+    }
+}
+
+float fupanas()
+{
+    if (suhu < upanas[0])
+    {
+        return 0;
+    }
+    else if (suhu >= upanas[0] && suhu <= upanas[1])
+    {
+        return (suhu - upanas[0]) / (upanas[1] - upanas[0]);
+    }
+    else if (suhu > upanas[1])
+    {
+        return 1;
+    }
+}
+
+float fulambat()
+{
+    if (nadi < ulambat[1])
+    {
+        return 1;
+    }
+    else if (nadi >= ulambat[1] && nadi <= ulambat[2])
+    {
+        return (ulambat[2] - nadi) / (ulambat[2] - ulambat[1]);
+    }
+    else if (nadi > ulambat[2])
+    {
+        return 0;
+    }
+}
+
+float fusedang()
+{
+    if (nadi < usedang[0])
+    {
+        return 0;
+    }
+    else if (nadi >= usedang[0] && nadi <= usedang[1])
+    {
+        return (nadi - usedang[0]) / (usedang[1] - usedang[0]);
+    }
+    else if (nadi >= usedang[1] && nadi <= usedang[2])
+    {
+        return (usedang[2] - nadi) / (usedang[2] - usedang[1]);
+    }
+    else if (nadi > usedang[2])
+    {
+        return 0;
+    }
+}
+
+float fucepat()
+{
+    if (nadi <= ucepat[0])
+    {
+        return 0;
+    }
+    else if (nadi > ucepat[0] && nadi < ucepat[1])
+    {
+        return (nadi - ucepat[0]) / (ucepat[1] - ucepat[0]);
+    }
+    else if (nadi >= ucepat[1])
+    {
+        return 1;
+    }
+}
+
+float Min(float a, float b)
+{
+    if (a < b)
+    {
+        return a;
+    }
+    else if (b < a)
+    {
+        return b;
+    }
+    else
+    {
+        return a;
+    }
+}
+
+void rule()
+{
+    minr[1] = Min(fin1mf1(), fin2mf1());
+    Rule[1] = out1mf1;
+    minr[2] = Min(fin1mf1(), fin2mf2());
+    Rule[2] = out1mf2;
+    minr[3] = Min(fin1mf1(), fin2mf3());
+    Rule[3] = out1mf3;
+    minr[4] = Min(fin1mf1(), fin2mf4());
+    Rule[4] = out1mf4;
+    minr[5] = Min(fin1mf1(), fin2mf5());
+    Rule[5] = out1mf5;
+    minr[6] = Min(fin1mf1(), fin2mf6());
+    Rule[6] = out1mf6;
+    minr[7] = Min(fin1mf1(), fin2mf7());
+    Rule[7] = out1mf7;
+
+    minr[8] = Min(fin1mf2(), fin2mf1());
+    Rule[8] = out1mf8;
+    minr[9] = Min(fin1mf2(), fin2mf2());
+    Rule[9] = out1mf9;
+    minr[10] = Min(fin1mf2(), fin2mf3());
+    Rule[10] = out1mf10;
+    minr[11] = Min(fin1mf2(), fin2mf4());
+    Rule[11] = out1mf11;
+    minr[12] = Min(fin1mf2(), fin2mf5());
+    Rule[12] = out1mf12;
+    minr[13] = Min(fin1mf2(), fin2mf6());
+    Rule[13] = out1mf13;
+    minr[14] = Min(fin1mf2(), fin2mf7());
+    Rule[14] = out1mf14;
+
+    minr[15] = Min(fin1mf3(), fin2mf1());
+    Rule[15] = out1mf15;
+    minr[16] = Min(fin1mf3(), fin2mf2());
+    Rule[16] = out1mf16;
+    minr[17] = Min(fin1mf3(), fin2mf3());
+    Rule[17] = out1mf17;
+    minr[18] = Min(fin1mf3(), fin2mf4());
+    Rule[19] = out1mf18;
+    minr[19] = Min(fin1mf3(), fin2mf5());
+    Rule[19] = out1mf19;
+    minr[20] = Min(fin1mf3(), fin2mf6());
+    Rule[20] = out1mf20;
+    minr[21] = Min(fin1mf3(), fin2mf7());
+    Rule[21] = out1mf21;
+ 
+     minr[22] = Min(fin1mf4(), fin2mf1());
+    Rule[22] = out1mf22;
+    minr[23] = Min(fin1mf4(), fin2mf2());
+    Rule[23] = out1mf23;
+    minr[24] = Min(fin1mf4(), fin2mf3());
+    Rule[24] = out1mf24;
+    minr[25] = Min(fin1mf4(), fin2mf4());
+    Rule[25] = out1mf25;
+    minr[26] = Min(fin1mf4(), fin2mf5());
+    Rule[26] = out1mf26;
+    minr[27] = Min(fin1mf4(), fin2mf6());
+    Rule[27] = out1mf27;
+    minr[28] = Min(fin1mf4(), fin2mf7());
+    Rule[28] = out1mf28;
+    
+    minr[29] = Min(fin1mf5(), fin2mf1());
+    Rule[29] = out1mf29;
+    minr[30] = Min(fin1mf5(), fin2mf2());
+    Rule[30] = out1mf30;
+    minr[31] = Min(fin1mf5(), fin2mf3());
+    Rule[31] = out1mf31;
+    minr[32] = Min(fin1mf5(), fin2mf4());
+    Rule[32] = out1mf32;
+    minr[33] = Min(fin1mf5(), fin2mf5());
+    Rule[33] = out1mf33;
+    minr[34] = Min(fin1mf5(), fin2mf6());
+    Rule[34] = out1mf34;
+    minr[35] = Min(fin1mf5(), fin2mf7());
+    Rule[35] = out1mf35;
+
+    minr[36] = Min(fin1mf6(), fin2mf1());
+    Rule[36] = out1mf36;
+    minr[37] = Min(fin1mf6(), fin2mf2());
+    Rule[37] = out1mf37;
+    minr[38] = Min(fin1mf6(), fin2mf3());
+    Rule[38] = out1mf38;
+    minr[39] = Min(fin1mf6(), fin2mf4());
+    Rule[39] = out1mf39;
+    minr[40] = Min(fin1mf6(), fin2mf5());
+    Rule[40] = out1mf40;
+    minr[41] = Min(fin1mf6(), fin2mf6());
+    Rule[41] = out1mf41;
+    minr[42] = Min(fin1mf6(), fin2mf7());
+    Rule[42] = out1mf42;
+
+    minr[43] = Min(fin1mf7(), fin2mf7());
+    Rule[43] = out1mf43;
+    minr[44] = Min(fin1mf7(), fin2mf1());
+    Rule[44] = out1mf44;
+    minr[45] = Min(fin1mf7(), fin2mf2());
+    Rule[45] = out1mf45;
+    minr[46] = Min(fin1mf7(), fin2mf3());
+    Rule[46] = out1mf46;
+    minr[47] = Min(fin1mf7(), fin2mf4());
+    Rule[47] = out1mf47;
+    minr[48] = Min(fin1mf7(), fin2mf5());
+    Rule[48] = out1mf48;
+    minr[49] = Min(fin1mf7(), fin2mf6());
+    Rule[49] = out1mf49;
+ 
+    // // if suhu dingin and nadi lambat then kurang sehat
+    // minr[1] = Min(fudingin(), fulambat());
+    // Rule[1] = out1mf1;
+    // // if suhu dingin and nadi sedang then kurang sehat
+    // minr[2] = Min(fudingin(), fusedang());
+    // Rule[2] = out1mf2;
+    // // if suhu dingin and nadi cepat then sakit
+    // minr[3] = Min(fudingin(), fucepat());
+    // Rule[3] = out1mf3;
+    // // if suhu normal and nadi lambat then kurang sehat
+    // minr[4] = Min(funormal(), fulambat());
+    // Rule[4] = out1mf4;
+    // // if suhu normal and nadi sedang then sehat
+    // minr[5] = Min(funormal(), fusedang());
+    // Rule[5] = out1mf5;
+    // // if suhu normal and nadi cepat then kurang sehat
+    // minr[6] = Min(funormal(), fucepat());
+    // Rule[6] = out1mf6;
+    // // if suhu panas and nadi lambat then kurangg sehat
+    // minr[7] = Min(fupanas(), fulambat());
+    // Rule[7] = out1mf7;
+    // // if suhu panas and nadi sedang then kurang sehat
+    // minr[8] = Min(fupanas(), fusedang());
+    // Rule[8] = out1mf8;
+    // // if suhu panas and nadi cepat then kurang sehat
+    // minr[9] = Min(fupanas(), fucepat());
+    // Rule[9] = out1mf9;
+}
+float A, B;
+float defuzzyfikasi()
+{
+    rule();
+    A = 0;
+    B = 0;
+	int i;
+    for(i = 1; i <= 49; i++)
+    {
+        // printf("Rule ke %d = %f\n", i, Rule[i]);
+        // printf("Min ke %d = %f\n", i, minr[i]);
+        A += Rule[i] * minr[i];
+        B += minr[i];
+    }
+    // printf("Hasil A : %f\n", A);
+    // printf("Hasil B : %f\n", B);
+    return A / B;
+}
+
+// int main()
+// {
+//     int x;
+//     for(x=0;x<10;x++)
+//     {
+//     printf("Masukan error : ");
+//     scanf("%f", &error);
+//     printf("Masukan derror : ");
+//     scanf("%f", &derror);
+
+//     printf("Keanggotaan udingin : %f\n", fudingin());
+//     printf("Keanggotaan unormal : %f\n", funormal());
+//     printf("Keanggotaan upanas : %f\n", fupanas());
+
+//     printf("Keanggotaan ulambat : %f\n", fulambat());
+//     printf("Keanggotaan usedang : %f\n", fusedang());
+//     printf("Keanggotaan ucepat : %f\n", fucepat());
+
+//     printf("Hasil Deff : %f\n", defuzzyfikasi());
+//     }
+//     return 0;
+// }
+
 void reverse(char* str, int len) 
 { 
     int i = 0, j = len - 1, temp; 
@@ -229,7 +889,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
+    error = 27.0;
+    derror =0.0827;
 			if(HAL_GPIO_ReadPin(GPIOC,PB_up_Pin)==1)
 			{
 				
@@ -281,7 +942,7 @@ int main(void)
 		lcd_gotoxy(0,1);
 		lcd_puts(buff);
 		ftoa(Vrms[0],buff2,2);
-		sprintf(buff, "suhu:%3.2f",Vrms2[0]);
+		sprintf(buff, "suhu:%3.5f",defuzzyfikasi());
 		// HAL_Delay(100);
 		lcd_gotoxy(0,2);
 		lcd_puts(buff);
@@ -300,9 +961,9 @@ int main(void)
 		strcat(TX_Data,koma);
 		strcat(TX_Data,sudut_penyalaan);
 		strcat(TX_Data,koma);
-		strcat(TX_Data,error);
-		strcat(TX_Data,koma);
-		strcat(TX_Data,derror);
+//		strcat(TX_Data,error);
+//		strcat(TX_Data,koma);
+//		strcat(TX_Data,derror);
 		strcat(TX_Data,koma);
 		strcat(TX_Data,out_fuzzy);
 		strcat(TX_Data,koma);
