@@ -39,7 +39,12 @@ int asum=0, adata=0, a[500];
 double Vsq [SampleData], Vrms[1], ADCVrms[1], Vsum[1], Vadc[1], iadcx[1];
 double Vsq2 [SampleData], Vrms2[1], ADCVrms2[1], Vsum2[1], Vadc2[1], iadcx2[1];
 uint32_t Tegangan[1];
-
+int alert=0;
+int flag_ds=0;
+float ds=0;
+float data[11];
+float temp_data[11];
+int count_sd=0;
 float sudut=90;
 double p;
 int dataADC,dataADC2,dataADC3;
@@ -83,8 +88,8 @@ int flag_konv=0;
 //int sudut =0;
 int count2=0;
 int count3=0;
-int counter=1600;
-float set_tegangan=47.0;
+int counter=0;
+float set_tegangan=100.0;
 
 
 
@@ -175,6 +180,18 @@ float Rule[50];
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+float calculateSD(float data[]) {
+    float sum = 0.0, mean, SD = 0.0;
+    int i;
+    for (i = 0; i < 10; ++i) {
+        sum += data[i];
+    }
+    mean = sum / 10;
+    for (i = 0; i < 10; ++i) {
+        SD += pow(data[i] - mean, 2);
+    }
+    return sqrt(SD / 10);
+}
 
 float fin1mf1()
 {
@@ -816,28 +833,30 @@ int main(void)
 				}
 			}
 
-   if(Vrms[0]>set_tegangan+0.5)
-		{
-			counter = counter+1;
-		} 
-		else if(Vrms[0]<set_tegangan-0.5)
-		{
-			counter = counter-1;
-		}
-		else if (Vrms[0]>=set_tegangan-0.5&&Vrms[0]<=set_tegangan-0.5)
-		{
-			counter=counter;
-		}
+//    if(Vrms[0]>set_tegangan+0.5)
+// 		{
+// 			counter = counter+1;
+// 		} 
+// 		else if(Vrms[0]<set_tegangan-0.5)
+// 		{
+// 			counter = counter-1;
+// 		}
+// 		else if (Vrms[0]>=set_tegangan-0.5&&Vrms[0]<=set_tegangan-0.5)
+// 		{
+// 			counter=counter;
+// 		}
 
     if (flag_error==0)
     {
     error =set_point-Vrms2[0];
+    // error=ds;
     flag_error=1;
     
     }
     else 
     {   error2=set_point-Vrms2[0];
-        derror =error-error2;
+        // derror =error-error2;
+        derror=ds;
         error=error2;
     }
     // out_fis=defuzzyfikasi();
@@ -872,7 +891,7 @@ int main(void)
         ftoa(error,cerror,2);
         ftoa(derror,cderror,4);
         ftoa(out_fis,cout_fis,2);
-        
+
 		//membuat protokol
 		strcpy(TX_Data,header);
 		strcat(TX_Data,koma);
@@ -1222,8 +1241,67 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		k=0;
     ADCVrms2[0]=(Vsum2[0]/SampleData);
 		Vsq2[0]=(ADCVrms2[0]/4094)*3;
-		Vrms2[0]=Vsq2[0]*100;
+		// Vrms2[0]=Vsq2[0]*100;
+        if(flag_ds==0)
+        {
+            for(int i=0;i<=10;i++)
+            {
+                data[i]=Vsq2[0]*100;
+                temp_data[i]=Vsq2[0]*100;
+            }
+            flag_ds=1;
+            count_sd=11;
+        }
+		else
+		{
+            for(int i=0;i<=10;i++)
+            {
+                temp_data[10]=Vsq2[0]*100;
+                if(i>=1)
+                {
+                    temp_data[i]=temp_data[i+1];
+                }
+                else temp_data[0]=temp_data[1];
+            }
+            ds=calculateSD(temp_data);
+            if(ds<=0.1)
+            {
+                for(int i=0;i<=10;i++)
+                {  
+                    data[i]=temp_data[i];
+                    
+                }
+                Vrms2[0]=temp_data[9];
+            }
+            else{
+                    for(int x=0;x<=10;x++)
+                {  
+                    temp_data[x]=data[x];
+                }
+                alert=1;
+            }
+		}
+    
+    // if(count_sd<=10){
+    //     data[count_sd]=Vsq2[0]*100;
+    //     count_sd++;
+    //     // data[0]=45.0;
+	// 	// 	data[3]=45.0;
+        
+    // }
+    // else{
+    //     ds=calculateSD(data);
+    //    if(ds<0.2)
+    //    {
+    //        Vrms2[0]=data[9];
+    //    }
+    //    else alert=1;
+    //    count_sd=0;
+
+    // }
+		
     Vsum2[0]=0;
+    
 
 
 //		tegangan = Vrms[0];
