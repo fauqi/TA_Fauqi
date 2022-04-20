@@ -72,9 +72,9 @@ char header[15]="$fauqi";
 char csuhu[15]="50";
 char ctegangan[15]="150";
 char csudut[15]="120";
-char cerror[15]="40";
-char cderror[15]="5";
-char cout_fis[15]="0.5";
+char cerror[99]="40";
+char cderror[99]="5";
+char cout_fis[99]="0.5";
 char crelay_state[15]="0";
 char cset_point[15]="0";
 char koma[15]=",";
@@ -83,8 +83,8 @@ int flag_konv=0;
 //int sudut =0;
 int count2=0;
 int count3=0;
-int counter=1000;
-float set_tegangan=206.0;
+int counter=1600;
+float set_tegangan=47.0;
 
 
 
@@ -816,23 +816,23 @@ int main(void)
 				}
 			}
 
-//    if(Vrms[0]>set_tegangan+0.5)
-//		{
-//			counter = counter+1;
-//		} 
-//		else if(Vrms[0]<set_tegangan-0.5)
-//		{
-//			counter = counter-1;
-//		}
-//		else if (Vrms[0]>=set_tegangan-0.5&&Vrms[0]<=set_tegangan-0.5)
-//		{
-//			counter=counter;
-//		}
-Vrms2[0]=36.0;
+   if(Vrms[0]>set_tegangan+0.5)
+		{
+			counter = counter+1;
+		} 
+		else if(Vrms[0]<set_tegangan-0.5)
+		{
+			counter = counter-1;
+		}
+		else if (Vrms[0]>=set_tegangan-0.5&&Vrms[0]<=set_tegangan-0.5)
+		{
+			counter=counter;
+		}
+
     if (flag_error==0)
     {
     error =set_point-Vrms2[0];
-    flag=1;
+    flag_error=1;
     
     }
     else 
@@ -840,13 +840,13 @@ Vrms2[0]=36.0;
         derror =error-error2;
         error=error2;
     }
-    out_fis=defuzzyfikasi();
-    sudut = out_fis*180.0;
-	if(sudut>=0.0 && sudut <=180.0)
-	{
-      p=((0.01*sudut)/180)/0.000005;
-	  counter=floor(p);
-	}
+    // out_fis=defuzzyfikasi();
+    // sudut = out_fis*180.0;
+	// if(sudut>=0.0 && sudut <=180.0)
+	// {
+    //   p=((0.01*sudut)/180)/0.000005;
+	//   counter=floor(p);
+	// }
 		sprintf(buff, "firing:90");
 		// HAL_Delay(100);
 		lcd_gotoxy(0,0);
@@ -870,8 +870,9 @@ Vrms2[0]=36.0;
 		ftoa(Vrms2[0],csuhu,2);
         ftoa(sudut,csudut,2);
         ftoa(error,cerror,2);
-        ftoa(derror,cderror,2);
+        ftoa(derror,cderror,4);
         ftoa(out_fis,cout_fis,2);
+        
 		//membuat protokol
 		strcpy(TX_Data,header);
 		strcat(TX_Data,koma);
