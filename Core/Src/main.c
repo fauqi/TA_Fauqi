@@ -33,6 +33,29 @@
 #define SampleData 1000
 #define Vzero1 0.0
 __IO uint16_t Nilai_ADC[2];
+
+int firing_delay = 7400;
+int maximum_firing_delay = 7400;
+unsigned long previousMillis = 0; 
+unsigned long currentMillis = 0;
+int temp_read_Delay = 500;
+float real_temperature = 0;
+
+
+
+//PID variables
+float PID_error = 0;
+float previous_error = 0;
+float elapsedTime, Time, timePrev;
+int PID_value = 0;
+//PID constants
+float kp = 180;   float ki= 0.00421;   float kd = 0;
+float PID_p = 0;    float PID_i = 0;    float PID_d = 0;
+
+
+unsigned int millis_value=0;
+int v=0;
+float errors=0;
 int on=0,i,k=0;
 float Iinput, Vinput,out_fis;
 int asum=0, adata=0, a[500];
@@ -71,7 +94,7 @@ int count=0;
 int cDelay=0;
 int del=1000;
 int relay_state=0;
-float set_point=40.0;
+float set_point=61.0;
 //protokol
 char header[15]="$fauqi";
 char csuhu[15]="50";
@@ -88,9 +111,10 @@ int flag_konv=0;
 //int sudut =0;
 int count2=0;
 int count3=0;
-int counter=0;
+int counter=1200;
 float set_tegangan=100.0;
 
+float buff_sudut=0;
 
 
 float nadi, suhu,error,derror=0,error2;
@@ -98,21 +122,21 @@ float A, B;
 
 //mf gw
 
-float in1mf1[] = {-6.123, 0.4658, 7.055};
-float in1mf2[] = {0.4658, 7.055, 13.64};
-float in1mf3[] = {7.055, 13.64, 20.23};
-float in1mf4[] = {13.64, 20.23, 26.82};
-float in1mf5[] = {20.23, 26.82, 33.41};
-float in1mf6[] = {26.8, 33.4, 40};
-float in1mf7[] = {33.41, 40, 46.59};
+float in1mf1[] = {-1.147, 0.0166, 1.518};
+float in1mf2[] = {0.01161, 0.7945, 1.714};
+float in1mf3[] = {1.508, 1.769, 3.483};
+float in1mf4[] = {2.242, 3.469, 4.643};
+float in1mf5[] = {3.481, 4.642, 5.802};
+float in1mf6[] = {4.643, 5.802, 6.96};
+float in1mf7[] = {5.802, 6.96, 8.118};
 
-float in2mf1[] ={-0.01407, -1.754e-05, 0.01404};
-float in2mf2[] ={-1.75e-05, 0.014, 0.0281};
-float in2mf3[] ={0.01404, 0.02809, 0.04214};
-float in2mf4[] ={0.02809, 0.04214, 0.05619};
-float in2mf5[] ={0.0421, 0.0562, 0.0702};
-float in2mf6[] ={0.05619, 0.07025, 0.0843};
-float in2mf7[] ={0.07025, 0.0843, 0.09835};
+float in2mf1[] ={-0.0666, 0.007697, 0.06161};
+float in2mf2[] ={-0.001681, 0.08437, 0.1213};
+float in2mf3[] ={0.05969, 0.1489, 0.1917};
+float in2mf4[] ={0.1287, 0.2138, 0.2679};
+float in2mf5[] ={0.212, 0.283, 0.344};
+float in2mf6[] ={0.2616, 0.3325, 0.4003};
+float in2mf7[] ={0.3442, 0.3987, 0.4662};
 
 
 
@@ -120,55 +144,55 @@ float sakit = 0;
 float ks = 0.5;
 float sehat = 1;
 
-float out1mf1=   0.8021;
-float out1mf2=   0.778;
-float out1mf3=   0.8566;
-float out1mf4= 0;
-float out1mf5= 0;
-float out1mf6= 0;
-float out1mf7= 0;
-float out1mf8=  0.4591;
-float out1mf9=   0.4482;
-float out1mf10=   0.4168;
-float out1mf11=   0.3137;
-float out1mf12=  0.2165;
-float out1mf13= 0;
-float out1mf14= 0;
-float out1mf15=   0.1457;
-float out1mf16=  0.1488;
-float out1mf17=   0.1485;
-float out1mf18=   0.1687;
-float out1mf19=  0.163;
-float out1mf20= 0;
-float out1mf21= 0;
-float out1mf22=   0.1727;
-float out1mf23=   0.1687;
-float out1mf24=   0.1652;
-float out1mf25=  0.1556;
-float out1mf26=  0.1529;
-float out1mf27=  0.15;
-float out1mf28= 0;
-float out1mf29=   0.163;
-float out1mf30=   0.156;
-float out1mf31=   0.149;
-float out1mf32=   0.1442;
-float out1mf33=   0.1361;
-float out1mf34=   0.1297;
-float out1mf35= 0;
-float out1mf36=  0.0815;
-float out1mf37=   0.0815;
-float out1mf38=  0.07473 ;
-float out1mf39=   0.07028;
-float out1mf40=   0.06775;
-float out1mf41=  0.06407 ;
-float out1mf42=  0.06136 ;
-float out1mf43=   -8.304e-06;
-float out1mf44=  -3.965e-05 ;
-float out1mf45=  -4.522e-05;
-float out1mf46=  0.0004035 ;
-float out1mf47=   3.729e-05;
-float out1mf48=   9.353e-05;
-float out1mf49=   -0.0001988;
+float out1mf1=    0.4879;
+float out1mf2=    1.06;
+float out1mf3=    2.032;
+float out1mf4=  2.624;
+float out1mf5=  3.806;
+float out1mf6=  2.358;
+float out1mf7=  10.67;
+float out1mf8=   0.9037;
+float out1mf9=    0.7244;
+float out1mf10=    0.7244;
+float out1mf11=    0.06051;
+float out1mf12=   -0.4854;
+float out1mf13=  0.04842;
+float out1mf14=  -3.417;
+float out1mf15=    0.01355;
+float out1mf16=   -0.01285;
+float out1mf17=    -0.01561;
+float out1mf18=    0.003491;
+float out1mf19=   0.01202;
+float out1mf20=  0.01872;
+float out1mf21=  0.005806;
+float out1mf22=    -0.004613;
+float out1mf23=    0.004637;
+float out1mf24=    0.004974;
+float out1mf25=   -0.001323;
+float out1mf26=   -0.003482;
+float out1mf27=   -0.005092;
+float out1mf28=  -0.0001478;
+float out1mf29=    0.001563;
+float out1mf30=    -0.001422;
+float out1mf31=    -0.001487;
+float out1mf32=   0.0003525;
+float out1mf33=    0.001233;
+float out1mf34=    0.002024;
+float out1mf35=  0.0005281;
+float out1mf36=   -0.0006679;
+float out1mf37=    0.0005794;
+float out1mf38=   0.0007945 ;
+float out1mf39=    -0.0002121;
+float out1mf40=    -0.000412;
+float out1mf41=   -0.0008316 ;
+float out1mf42=   0.001437 ;
+float out1mf43=    0.0004147;
+float out1mf44=   -0.0004771 ;
+float out1mf45=   -0.0008323;
+float out1mf46=   0.0002251 ;
+float out1mf47=    0.0001059;
+float out1mf48=    0.00117;
+float out1mf49=    0.0006178;
 
 
 
@@ -811,8 +835,9 @@ int main(void)
 				
 				while(HAL_GPIO_ReadPin(GPIOC,PB_up_Pin)==1){
 				
-				counter=counter+1;
-				sprintf(buff, "counter:%4d",counter);
+//				counter=counter+1;
+					kp=kp+5;
+				sprintf(buff, "kp:%2f",kp);
 			// HAL_Delay(100);
 					HAL_Delay(50);
 			lcd_gotoxy(0,3);
@@ -824,8 +849,10 @@ int main(void)
 				
 				while(HAL_GPIO_ReadPin(GPIOC,PB_down_Pin)==1){
 				 
-				counter=counter-1;
-				sprintf(buff, "counter:%4d",counter);
+//				counter=counter-1;
+					kp=kp-5;
+//				sprintf(buff, "counter:%4d",counter);
+					sprintf(buff, "kp:%2f",kp);
 					HAL_Delay(50);
 			// HAL_Delay(100);
 			lcd_gotoxy(0,3);
@@ -853,45 +880,112 @@ int main(void)
     flag_error=1;
     
     }
+
     else 
     {   error2=set_point-Vrms2[0];
-        // derror =error-error2;
-        derror=ds;
+        derror =error-error2;
+        // derror=ds;
         error=error2;
     }
-    // out_fis=defuzzyfikasi();
-    // sudut = out_fis*180.0;
+
+    currentMillis = millis_value;           //Save the value of time before the loop
+   /*  We create this if so we will read the temperature and change values each "temp_read_Delay"
+    *  value. Change that value above iv you want. The MAX6675 read is slow. Tha will affect the
+    *  PID control. I've tried reading the temp each 100ms but it didn't work. With 500ms worked ok.*/
+  if(currentMillis - previousMillis >= temp_read_Delay){
+    previousMillis += temp_read_Delay;              //Increase the previous time for next loop
+    real_temperature = Vrms2[0];  //get the real temperature in Celsius degrees
+
+    PID_error = set_point - real_temperature;        //Calculate the pid ERROR
+    
+    if(PID_error >= 2.0)                              //integral constant will only affect errors below 30ºC             
+    {PID_i = 0;}
+    
+    PID_p = kp * PID_error;                         //Calculate the P value
+    PID_i = PID_i + (ki * PID_error);               //Calculate the I value
+    timePrev = Time;                    // the previous time is stored before the actual time read
+    Time = millis_value;                    // actual time read
+    elapsedTime = (Time - timePrev) / 1000;   
+    PID_d = kd*((PID_error - previous_error)/elapsedTime);  //Calculate the D value
+    PID_value = PID_p + PID_i + PID_d;                      //Calculate total PID value
+
+    //We define firing delay range between 0 and 7400. Read above why 7400!!!!!!!
+    if(PID_value < 0)
+    {      PID_value = 0;       }
+    if(PID_value > 180)
+    {      PID_value = 180;    }
+    //Printe the values on the LCD
+    previous_error = PID_error; //Remember to store the previous error.
+  }
+	sudut=180-PID_value;
+		 if(sudut>=0.0 && sudut <=180.0)
+	 {
+		 if(sudut>=170)sudut=170;
+       p=((0.01*sudut)/180)/0.000005;
+	   counter=floor(p);
+		 
+	 }
+
+
+	// 	if(derror>=0&&error>=0)
+	// 	{
+    // // out_fis=defuzzyfikasi();
+	// 	//if(out_fis>=0)
+	// // 		if(out_fis<=0.7)
+    // // sudut = out_fis*180.0;
+	// // 		if(error>=-1&&error<=1)
+	// // 			sudut=82;
+	// }
+    	// sudut =82;
 	// if(sudut>=0.0 && sudut <=180.0)
 	// {
     //   p=((0.01*sudut)/180)/0.000005;
 	//   counter=floor(p);
 	// }
+
+//    if(error>=-2.5&&error<=2.5)
+//    {
+//        if(set_point==40.0)counter=1610;
+//        else if(set_point==50.0)counter=1400;
+//				else counter=1000;
+//    }
 		sprintf(buff, "firing:90");
 		// HAL_Delay(100);
-		lcd_gotoxy(0,0);
-		lcd_puts("uji Perhitungan FIS");
+//		lcd_gotoxy(0,0);
+//		lcd_puts("uji Perhitungan FIS");
 		// HAL_Delay(100);
-//		Vrms[0] = 0.3131*ADCVrms[0] + 0.1456;
+   //Vrms[0] = 0.3131*ADCVrms[0] + 0.1456;
+		Vrms[0] = (pow(0.00000089243517154025*ADCVrms[0],3)) - (pow(0.00059932512401010900*ADCVrms[0],2)) + (0.36291475608663000000*ADCVrms[0]) - (22.56728795362070000000);
+
 		sprintf(buff, "Vrms:%3.5f",Vrms[0]);
 		HAL_Delay(300);
 		lcd_gotoxy(0,1);
 		lcd_puts(buff);
 		ftoa(Vrms[0],buff2,2);
+
 		sprintf(buff, "Suhu:%3.5f",Vrms2[0]);
 		// HAL_Delay(100);
 		lcd_gotoxy(0,2);
 		lcd_puts(buff);
 		sprintf(buff, "counter:%4d",counter);
 		// HAL_Delay(100);
+		errors=error;
 		lcd_gotoxy(0,3);
 		lcd_puts(buff);
 		ftoa(Vrms[0],ctegangan,2);
 		ftoa(Vrms2[0],csuhu,2);
-        ftoa(sudut,csudut,2);
-        ftoa(error,cerror,2);
-        ftoa(derror,cderror,4);
-        ftoa(out_fis,cout_fis,2);
-
+		if(counter == 1000)sudut=90.0;
+		sprintf(csudut,"%4d",counter);
+//    ftoa(sudut,csudut,2);
+//    ftoa(errors,cerror,2);
+		sprintf(cerror,"%2.2f",PID_error);
+		sprintf(cderror,"%2.4f",PID_p);
+//    ftoa(derror,cderror,4);
+    sprintf(cout_fis,"%3d",PID_value);
+//    ftoa(out_fis,cout_fis,2);
+		lcd_gotoxy(0,0);
+		
+		lcd_puts(csudut);
 		//membuat protokol
 		strcpy(TX_Data,header);
 		strcat(TX_Data,koma);
@@ -1202,6 +1296,12 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		if(htim==&htim1)
 		{
       //lontong
+        v=v+1;
+        if(v>=200)
+        {
+        millis_value=millis_value+1;
+        v=0;
+        }
 		count=1300;
     count2=count2+1;
 		millis_serial=millis_serial+1;
@@ -1229,7 +1329,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		Vsq[k]= Vadc[0] * Vadc[0];
 		Vsum[0]+=Vsq[k];
 		ADCVrms[0]=sqrt((Vsum[0]/SampleData));
-    Vrms[0] = 0.3131*ADCVrms[0] + 0.1456;
+//    Vrms[0] = 0.3131*ADCVrms[0] + 0.1456;
 		
 		Vadc2[0]= Nilai_ADC[1];
 		Vsum2[0]+=Vadc2[0];
@@ -1264,14 +1364,14 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
                 else temp_data[0]=temp_data[1];
             }
             ds=calculateSD(temp_data);
-            if(ds<=0.1)
+            if(ds<=0.2)
             {
                 for(int i=0;i<=10;i++)
                 {  
                     data[i]=temp_data[i];
                     
                 }
-                Vrms2[0]=temp_data[9];
+                Vrms2[0]=temp_data[9]-1.5;
             }
             else{
                     for(int x=0;x<=10;x++)
@@ -1325,7 +1425,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	data=atoi(RX_Data);
 	if(data == 40)set_point=40.0;
 	else if (data==50)set_point=50.0;
-	else if (data ==61)set_point=61.0;
+	else if (data ==61)set_point=61;
 	else if(data==10) {relay_state=1;HAL_GPIO_WritePin(GPIOA,GPIO_PIN_4,GPIO_PIN_SET);}
 	else if(data==11){relay_state=0;HAL_GPIO_WritePin(GPIOA,GPIO_PIN_4,GPIO_PIN_RESET);}
 	else if(data==20) {relay_state=1;HAL_GPIO_WritePin(GPIOE,GPIO_PIN_7,GPIO_PIN_SET);}
