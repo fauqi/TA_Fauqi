@@ -975,11 +975,11 @@ int main(void)
 		ftoa(Vrms[0],ctegangan,2);
 		ftoa(Vrms2[0],csuhu,2);
 		if(counter == 1000)sudut=90.0;
-		sprintf(csudut,"%4d",counter);
+		sprintf(csudut,"%4d",sudut);
 //    ftoa(sudut,csudut,2);
 //    ftoa(errors,cerror,2);
 		sprintf(cerror,"%2.2f",PID_error);
-		sprintf(cderror,"%2.4f",PID_p);
+		sprintf(cderror,"%2.4f",PID_value);
 //    ftoa(derror,cderror,4);
     sprintf(cout_fis,"%3d",PID_value);
 //    ftoa(out_fis,cout_fis,2);
