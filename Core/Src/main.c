@@ -47,7 +47,8 @@ float real_temperature = 0;
 float PID_error = 0;
 float previous_error = 0;
 float elapsedTime, Time, timePrev;
-int PID_value = 0;
+float PID_value = 0;
+float PID_value2 = 0;
 //PID constants
 float kp = 180;   float ki= 0.00421;   float kd = 0;
 float PID_p = 0;    float PID_i = 0;    float PID_d = 0;
@@ -908,10 +909,11 @@ int main(void)
     elapsedTime = (Time - timePrev) / 1000;   
     PID_d = kd*((PID_error - previous_error)/elapsedTime);  //Calculate the D value
     PID_value = PID_p + PID_i + PID_d;                      //Calculate total PID value
-
+		PID_value2=PID_value;
     //We define firing delay range between 0 and 7400. Read above why 7400!!!!!!!
     if(PID_value < 0)
-    {      PID_value = 0;       }
+    {  	
+		PID_value = 0;       }
     if(PID_value > 180)
     {      PID_value = 180;    }
     //Printe the values on the LCD
@@ -975,13 +977,13 @@ int main(void)
 		ftoa(Vrms[0],ctegangan,2);
 		ftoa(Vrms2[0],csuhu,2);
 		if(counter == 1000)sudut=90.0;
-		sprintf(csudut,"%4d",sudut);
+		sprintf(csudut,"%3.2f",sudut);
 //    ftoa(sudut,csudut,2);
 //    ftoa(errors,cerror,2);
 		sprintf(cerror,"%2.2f",PID_error);
-		sprintf(cderror,"%2.4f",PID_value);
+		sprintf(cderror,"%2.2f",PID_value2);
 //    ftoa(derror,cderror,4);
-    sprintf(cout_fis,"%3d",PID_value);
+    sprintf(cout_fis,"%3.2f",PID_value2);
 //    ftoa(out_fis,cout_fis,2);
 		lcd_gotoxy(0,0);
 		
