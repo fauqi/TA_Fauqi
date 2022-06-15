@@ -122,21 +122,21 @@ float A, B;
 
 //mf gw
 
-float in1mf1[] = {-1.147, 0.0166, 1.518};
-float in1mf2[] = {0.01161, 0.7945, 1.714};
-float in1mf3[] = {1.508, 1.769, 3.483};
-float in1mf4[] = {2.242, 3.469, 4.643};
-float in1mf5[] = {3.481, 4.642, 5.802};
-float in1mf6[] = {4.643, 5.802, 6.96};
-float in1mf7[] = {5.802, 6.96, 8.118};
+float in1mf1[] = {-7.895, -1.154, 5.558};
+float in1mf2[] = {-0.4191, 5.897, 13.39};
+float in1mf3[] = {6.149, 13.36, 20.48};
+float in1mf4[] = {13.38, 20.48, 27.58};
+float in1mf5[] = {20.48, 27.58, 34.68};
+float in1mf6[] = {27.58, 34.67, 41.77};
+float in1mf7[] = {34.67, 41.77, 48.87};
 
-float in2mf1[] ={-0.0666, 0.007697, 0.06161};
-float in2mf2[] ={-0.001681, 0.08437, 0.1213};
-float in2mf3[] ={0.05969, 0.1489, 0.1917};
-float in2mf4[] ={0.1287, 0.2138, 0.2679};
-float in2mf5[] ={0.212, 0.283, 0.344};
-float in2mf6[] ={0.2616, 0.3325, 0.4003};
-float in2mf7[] ={0.3442, 0.3987, 0.4662};
+float in2mf1[] ={-29.58, -0.844, 27.9};
+float in2mf2[] ={-0.844, 27.9, 56.64};
+float in2mf3[] ={27.9, 56.64, 85.38};
+float in2mf4[] ={56.64, 85.38, 114.1};
+float in2mf5[] ={85.38, 114.1, 142.9};
+float in2mf6[] ={114, 143, 172};
+float in2mf7[] ={143, 171, 200};
 
 
 
@@ -144,55 +144,55 @@ float sakit = 0;
 float ks = 0.5;
 float sehat = 1;
 
-float out1mf1=    0.4879;
-float out1mf2=    1.06;
-float out1mf3=    2.032;
-float out1mf4=  2.624;
-float out1mf5=  3.806;
-float out1mf6=  2.358;
-float out1mf7=  10.67;
-float out1mf8=   0.9037;
-float out1mf9=    0.7244;
-float out1mf10=    0.7244;
-float out1mf11=    0.06051;
-float out1mf12=   -0.4854;
-float out1mf13=  0.04842;
-float out1mf14=  -3.417;
-float out1mf15=    0.01355;
-float out1mf16=   -0.01285;
-float out1mf17=    -0.01561;
-float out1mf18=    0.003491;
-float out1mf19=   0.01202;
-float out1mf20=  0.01872;
-float out1mf21=  0.005806;
-float out1mf22=    -0.004613;
-float out1mf23=    0.004637;
-float out1mf24=    0.004974;
-float out1mf25=   -0.001323;
-float out1mf26=   -0.003482;
-float out1mf27=   -0.005092;
-float out1mf28=  -0.0001478;
-float out1mf29=    0.001563;
-float out1mf30=    -0.001422;
-float out1mf31=    -0.001487;
-float out1mf32=   0.0003525;
-float out1mf33=    0.001233;
-float out1mf34=    0.002024;
-float out1mf35=  0.0005281;
-float out1mf36=   -0.0006679;
-float out1mf37=    0.0005794;
-float out1mf38=   0.0007945 ;
-float out1mf39=    -0.0002121;
-float out1mf40=    -0.000412;
-float out1mf41=   -0.0008316 ;
-float out1mf42=   0.001437 ;
-float out1mf43=    0.0004147;
-float out1mf44=   -0.0004771 ;
-float out1mf45=   -0.0008323;
-float out1mf46=   0.0002251 ;
-float out1mf47=    0.0001059;
-float out1mf48=    0.00117;
-float out1mf49=    0.0006178;
+float out1mf1=     0.5955;
+float out1mf2=    -1.208;
+float out1mf3=    0;
+float out1mf4=  0;
+float out1mf5=  0;
+float out1mf6=  0;
+float out1mf7=  0;
+float out1mf8=    -0.06062;
+float out1mf9=     -0.5566;
+float out1mf10=   0;
+float out1mf11=    0;
+float out1mf12=   0;
+float out1mf13=  0;
+float out1mf14=  0;
+float out1mf15=     0.02497;
+float out1mf16=    0.09772;
+float out1mf17=    0;
+float out1mf18=    0;
+float out1mf19=   0;
+float out1mf20=  0;
+float out1mf21=  0;
+float out1mf22=    -0.008926;
+float out1mf23=     -0.008133;
+float out1mf24=    0;
+float out1mf25=   0;
+float out1mf26=   0;
+float out1mf27=   0;
+float out1mf28=  0;
+float out1mf29=     0.002447;
+float out1mf30=    0.0397;
+float out1mf31=   0;
+float out1mf32=   0;
+float out1mf33=    0;
+float out1mf34=    0;
+float out1mf35=  0;
+float out1mf36=    -0.00501;
+float out1mf37=     -0.1189;
+float out1mf38=   0 ;
+float out1mf39=    0;
+float out1mf40=    0;
+float out1mf41=   0 ;
+float out1mf42=   0 ;
+float out1mf43=   0;
+float out1mf44=   0 ;
+float out1mf45=   0;
+float out1mf46=  0 ;
+float out1mf47=    0;
+float out1mf48=   0;
+float out1mf49=   0;
 
 
 
@@ -611,33 +611,7 @@ void rule()
     minr[49] = Min(fin1mf7(), fin2mf6());
     Rule[49] = out1mf49;
  
-    // // if suhu dingin and nadi lambat then kurang sehat
-    // minr[1] = Min(fudingin(), fulambat());
-    // Rule[1] = out1mf1;
-    // // if suhu dingin and nadi sedang then kurang sehat
-    // minr[2] = Min(fudingin(), fusedang());
-    // Rule[2] = out1mf2;
-    // // if suhu dingin and nadi cepat then sakit
-    // minr[3] = Min(fudingin(), fucepat());
-    // Rule[3] = out1mf3;
-    // // if suhu normal and nadi lambat then kurang sehat
-    // minr[4] = Min(funormal(), fulambat());
-    // Rule[4] = out1mf4;
-    // // if suhu normal and nadi sedang then sehat
-    // minr[5] = Min(funormal(), fusedang());
-    // Rule[5] = out1mf5;
-    // // if suhu normal and nadi cepat then kurang sehat
-    // minr[6] = Min(funormal(), fucepat());
-    // Rule[6] = out1mf6;
-    // // if suhu panas and nadi lambat then kurangg sehat
-    // minr[7] = Min(fupanas(), fulambat());
-    // Rule[7] = out1mf7;
-    // // if suhu panas and nadi sedang then kurang sehat
-    // minr[8] = Min(fupanas(), fusedang());
-    // Rule[8] = out1mf8;
-    // // if suhu panas and nadi cepat then kurang sehat
-    // minr[9] = Min(fupanas(), fucepat());
-    // Rule[9] = out1mf9;
+
 }
 float A, B;
 float defuzzyfikasi()
@@ -648,38 +622,15 @@ float defuzzyfikasi()
 	int i;
     for(i = 1; i <= 49; i++)
     {
-        // printf("Rule ke %d = %f\n", i, Rule[i]);
-        // printf("Min ke %d = %f\n", i, minr[i]);
+ 
         A += Rule[i] * minr[i];
         B += minr[i];
     }
-    // printf("Hasil A : %f\n", A);
-    // printf("Hasil B : %f\n", B);
+
     return A / B;
 }
 
-// int main()
-// {
-//     int x;
-//     for(x=0;x<10;x++)
-//     {
-//     printf("Masukan error : ");
-//     scanf("%f", &error);
-//     printf("Masukan derror : ");
-//     scanf("%f", &derror);
 
-//     printf("Keanggotaan udingin : %f\n", fudingin());
-//     printf("Keanggotaan unormal : %f\n", funormal());
-//     printf("Keanggotaan upanas : %f\n", fupanas());
-
-//     printf("Keanggotaan ulambat : %f\n", fulambat());
-//     printf("Keanggotaan usedang : %f\n", fusedang());
-//     printf("Keanggotaan ucepat : %f\n", fucepat());
-
-//     printf("Hasil Deff : %f\n", defuzzyfikasi());
-//     }
-//     return 0;
-// }
 
 void reverse(char* str, int len) 
 { 
@@ -888,60 +839,59 @@ int main(void)
         error=error2;
     }
 
-    currentMillis = millis_value;           //Save the value of time before the loop
-   /*  We create this if so we will read the temperature and change values each "temp_read_Delay"
-    *  value. Change that value above iv you want. The MAX6675 read is slow. Tha will affect the
-    *  PID control. I've tried reading the temp each 100ms but it didn't work. With 500ms worked ok.*/
-  if(currentMillis - previousMillis >= temp_read_Delay){
-    previousMillis += temp_read_Delay;              //Increase the previous time for next loop
-    real_temperature = Vrms2[0];  //get the real temperature in Celsius degrees
+//     currentMillis = millis_value;           //Save the value of time before the loop
+//    /*  We create this if so we will read the temperature and change values each "temp_read_Delay"
+//     *  value. Change that value above iv you want. The MAX6675 read is slow. Tha will affect the
+//     *  PID control. I've tried reading the temp each 100ms but it didn't work. With 500ms worked ok.*/
+//   if(currentMillis - previousMillis >= temp_read_Delay){
+//     previousMillis += temp_read_Delay;              //Increase the previous time for next loop
+//     real_temperature = Vrms2[0];  //get the real temperature in Celsius degrees
 
-    PID_error = set_point - real_temperature;        //Calculate the pid ERROR
+//     PID_error = set_point - real_temperature;        //Calculate the pid ERROR
     
-    if(PID_error >= 2.0)                              //integral constant will only affect errors below 30ºC             
-    {PID_i = 0;}
+//     if(PID_error >= 2.0)                              //integral constant will only affect errors below 30ºC             
+//     {PID_i = 0;}
     
-    PID_p = kp * PID_error;                         //Calculate the P value
-    PID_i = PID_i + (ki * PID_error);               //Calculate the I value
-    timePrev = Time;                    // the previous time is stored before the actual time read
-    Time = millis_value;                    // actual time read
-    elapsedTime = (Time - timePrev) / 1000;   
-    PID_d = kd*((PID_error - previous_error)/elapsedTime);  //Calculate the D value
-    PID_value = PID_p + PID_i + PID_d;                      //Calculate total PID value
+//     PID_p = kp * PID_error;                         //Calculate the P value
+//     PID_i = PID_i + (ki * PID_error);               //Calculate the I value
+//     timePrev = Time;                    // the previous time is stored before the actual time read
+//     Time = millis_value;                    // actual time read
+//     elapsedTime = (Time - timePrev) / 1000;   
+//     PID_d = kd*((PID_error - previous_error)/elapsedTime);  //Calculate the D value
+//     PID_value = PID_p + PID_i + PID_d;                      //Calculate total PID value
 
-    //We define firing delay range between 0 and 7400. Read above why 7400!!!!!!!
-    if(PID_value < 0)
-    {      PID_value = 0;       }
-    if(PID_value > 180)
-    {      PID_value = 180;    }
-    //Printe the values on the LCD
-    previous_error = PID_error; //Remember to store the previous error.
-  }
-	sudut=180-PID_value;
-		 if(sudut>=0.0 && sudut <=180.0)
-	 {
-		 if(sudut>=170)sudut=170;
-       p=((0.01*sudut)/180)/0.000005;
-	   counter=floor(p);
+//     //We define firing delay range between 0 and 7400. Read above why 7400!!!!!!!
+//     if(PID_value < 0)
+//     {      PID_value = 0;       }
+//     if(PID_value > 180)
+//     {      PID_value = 180;    }
+//     //Printe the values on the LCD
+//     previous_error = PID_error; //Remember to store the previous error.
+//   }
+	// sudut=180-PID_value;
+	// 	 if(sudut>=0.0 && sudut <=180.0)
+	//  {
+	// 	 if(sudut>=170)sudut=170;
+    //    p=((0.01*sudut)/180)/0.000005;
+	//    counter=floor(p);
 		 
-	 }
+	//  }
 
 
-	// 	if(derror>=0&&error>=0)
-	// 	{
-    // // out_fis=defuzzyfikasi();
-	// 	//if(out_fis>=0)
-	// // 		if(out_fis<=0.7)
-    // // sudut = out_fis*180.0;
-	// // 		if(error>=-1&&error<=1)
-	// // 			sudut=82;
-	// }
-    	// sudut =82;
-	// if(sudut>=0.0 && sudut <=180.0)
-	// {
-    //   p=((0.01*sudut)/180)/0.000005;
-	//   counter=floor(p);
-	// }
+	
+    out_fis=defuzzyfikasi();
+		if(out_fis>=0)
+			if(out_fis<=0.7)
+    sudut = out_fis*180.0;
+//			if(error>=-1&&error<=1)
+//				sudut=82;
+//	
+//    	sudut =82;
+	if(sudut>=0.0 && sudut <=180.0)
+	{
+      p=((0.01*sudut)/180)/0.000005;
+	  counter=floor(p);
+	}
 
 //    if(error>=-2.5&&error<=2.5)
 //    {
@@ -975,13 +925,13 @@ int main(void)
 		ftoa(Vrms[0],ctegangan,2);
 		ftoa(Vrms2[0],csuhu,2);
 		if(counter == 1000)sudut=90.0;
-		sprintf(csudut,"%4d",counter);
+		sprintf(csudut,"%2.2f",sudut);
 //    ftoa(sudut,csudut,2);
 //    ftoa(errors,cerror,2);
-		sprintf(cerror,"%2.2f",PID_error);
-		sprintf(cderror,"%2.4f",PID_p);
+		sprintf(cerror,"%2.2f",error);
+		sprintf(cderror,"%2.4f",derror);
 //    ftoa(derror,cderror,4);
-    sprintf(cout_fis,"%3d",PID_value);
+    sprintf(cout_fis,"%2.3f",out_fis);
 //    ftoa(out_fis,cout_fis,2);
 		lcd_gotoxy(0,0);
 		
