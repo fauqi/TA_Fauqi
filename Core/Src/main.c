@@ -839,43 +839,7 @@ int main(void)
         error=error2;
     }
 
-//     currentMillis = millis_value;           //Save the value of time before the loop
-//    /*  We create this if so we will read the temperature and change values each "temp_read_Delay"
-//     *  value. Change that value above iv you want. The MAX6675 read is slow. Tha will affect the
-//     *  PID control. I've tried reading the temp each 100ms but it didn't work. With 500ms worked ok.*/
-//   if(currentMillis - previousMillis >= temp_read_Delay){
-//     previousMillis += temp_read_Delay;              //Increase the previous time for next loop
-//     real_temperature = Vrms2[0];  //get the real temperature in Celsius degrees
 
-//     PID_error = set_point - real_temperature;        //Calculate the pid ERROR
-    
-//     if(PID_error >= 2.0)                              //integral constant will only affect errors below 30ºC             
-//     {PID_i = 0;}
-    
-//     PID_p = kp * PID_error;                         //Calculate the P value
-//     PID_i = PID_i + (ki * PID_error);               //Calculate the I value
-//     timePrev = Time;                    // the previous time is stored before the actual time read
-//     Time = millis_value;                    // actual time read
-//     elapsedTime = (Time - timePrev) / 1000;   
-//     PID_d = kd*((PID_error - previous_error)/elapsedTime);  //Calculate the D value
-//     PID_value = PID_p + PID_i + PID_d;                      //Calculate total PID value
-
-//     //We define firing delay range between 0 and 7400. Read above why 7400!!!!!!!
-//     if(PID_value < 0)
-//     {      PID_value = 0;       }
-//     if(PID_value > 180)
-//     {      PID_value = 180;    }
-//     //Printe the values on the LCD
-//     previous_error = PID_error; //Remember to store the previous error.
-//   }
-	// sudut=180-PID_value;
-	// 	 if(sudut>=0.0 && sudut <=180.0)
-	//  {
-	// 	 if(sudut>=170)sudut=170;
-    //    p=((0.01*sudut)/180)/0.000005;
-	//    counter=floor(p);
-		 
-	//  }
 
 
 	
@@ -883,22 +847,14 @@ int main(void)
 		if(out_fis>=0)
 			if(out_fis<=0.7)
     sudut = out_fis*180.0;
-//			if(error>=-1&&error<=1)
-//				sudut=82;
-//	
-//    	sudut =82;
+
 	if(sudut>=0.0 && sudut <=180.0)
 	{
       p=((0.01*sudut)/180)/0.000005;
 	  counter=floor(p);
 	}
 
-//    if(error>=-2.5&&error<=2.5)
-//    {
-//        if(set_point==40.0)counter=1610;
-//        else if(set_point==50.0)counter=1400;
-//				else counter=1000;
-//    }
+
 		sprintf(buff, "firing:90");
 		// HAL_Delay(100);
 //		lcd_gotoxy(0,0);
