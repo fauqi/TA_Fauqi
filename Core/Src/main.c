@@ -140,10 +140,6 @@ float in2mf7[] ={143, 171, 200};
 
 
 
-float sakit = 0;
-float ks = 0.5;
-float sehat = 1;
-
 float out1mf1=     0.5955;
 float out1mf2=    -1.208;
 float out1mf3=    0;
